@@ -1,0 +1,23 @@
+[project]
+name = "thirdweb-langgraph"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "grandalf>=0.8",
+    "langchain-anthropic>=0.3.10",
+    "langchain-exa>=0.2.1",
+    "langchain-openai>=0.3.9",
+    "langgraph>=0.3.11",
+    "pydantic-ai>=0.0.41",
+    "thirdweb-ai[all]>=0.1.2",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "ipdb>=0.13.13",
+    "ipython>=9.0.2",
+    "isort>=6.0.1",
+]
