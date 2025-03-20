@@ -1,0 +1,14 @@
+# Insight
+
+How many different ERC20 tokens does 0xF977814e90dA44bFA03b6295A0616a897441aceC own?
+What's the value of the first token?
+How much USDT does 0xC22166664e820cdA6bf4cedBdbb4fa1E6A84C440 own?
+
+How many different ERC20 tokens does this address own?
+How many ERC721 NFTs does this address own?
+What is the total value of all of these ERC20 tokens?
+
+What is the ENS name of 0xEb0effdFB4dC5b3d5d3aC6ce29F3ED213E95d675?
+
+How many different ERC20 tokens does thirdweb.eth own?
+How many 0x01454cdc3fab2a026cc7d1cb2aea9b909d5ba0ee ERC20 tokens are owned by thirdweb.eth?
