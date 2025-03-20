@@ -10,6 +10,19 @@ from thirdweb_ai.adapters.langchain import get_langchain_tools
 
 insight = Insight(secret_key=os.getenv("THIRDWEB_SECRET_KEY"), chain_id=1)
 insight_tools = get_langchain_tools(insight.get_tools())
+# subset to tools I have tested
+insight_tools = [
+    tool
+    for tool in insight_tools
+    if tool.name
+    in [
+        "get_erc20_tokens",
+        "get_contract_metadata",
+        "get_erc721_tokens",
+        "get_token_prices",
+        "resolve",
+    ]
+]
 
 
 @tool
