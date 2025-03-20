@@ -14,18 +14,19 @@ insight_tools = get_langchain_tools(insight.get_tools())
 
 @tool
 def extract_json_value(json_data, key_path):
-    """
-    Extracts a value from a JSON object based on a key path.
+    """Searches the web for relevant documents and extracts key highlights.
 
-    Supports accessing both dictionary keys and list indexes.
+    This function uses Exa Search to retrieve up to 3 relevant web pages and extracts useful metadata,
+    including key highlights and URLs. It is designed to help an AI assistant fetch real-time information.
 
-    Example:
-    json_data = {"data": [{"balance": 100}, {"balance": 200}]}
-    extract_json_value(json_data, "data.0.balance")  # Returns 100
+    Example usage:
+        - "What is the contract address of Ethereum?" → Returns a list of sources with relevant information.
+        - "Find recent news about AI in finance." → Retrieves web content with AI-related financial news.
 
-    :param json_data: Dictionary representing JSON data.
-    :param key_path: String representing the nested key path (e.g., "data.0.balance").
-    :return: Extracted value or None if the path is invalid.
+    :param query: The search query describing the information needed.
+    :type query: str
+    :return: A list of formatted strings containing URLs and highlighted excerpts.
+    :rtype: list[str]
     """
     try:
         keys = key_path.split(".")
@@ -74,7 +75,12 @@ def count_json_list(json_data, key_path):
 
 @tool
 def retrieve_web_content(query: str) -> list[str]:
-    """Function to retrieve usable documents for AI assistant"""
+    """Function to retrieve usable documents for AI assistant
+
+    You can for example find the address of a token by its ticker or name:
+
+    What is the token contract address of Ethereum? -> Returns the contract address of Ethereum token
+    """
     # Initialize the Exa Search retriever
     retriever = ExaSearchRetriever(
         k=3, highlights=True, exa_api_key=os.getenv("EXA_API_KEY"), use_autoprompt=True
@@ -104,6 +110,4 @@ def retrieve_web_content(query: str) -> list[str]:
     # Execute the retrieval and processing chain
     retrieval_chain = retriever | document_chain.map()
 
-    # Retrieve and return the documents
-    documents = retrieval_chain.invoke(query)
-    return documents
+    return retrieval_chain.invoke(query)
