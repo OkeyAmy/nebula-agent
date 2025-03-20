@@ -42,7 +42,7 @@ def main():
                 console.print("[bold red]Exiting...[/bold red]")
                 break
 
-            inputs = {"messages": [user_input]}
+            inputs = {"messages": [user_input], "wallets": {}}
             console.print("\nInsight:", style="bold magenta")
 
             with Progress(
