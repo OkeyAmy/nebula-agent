@@ -18,19 +18,18 @@ class State(MessagesState):
 def intent_router(state: State) -> Literal["extract_wallets", "tools"]:
     out = intent_chain.invoke({"message": state["messages"][0]})
     intent = out.intent.name
-    return "extract_wallets" if intent in ["transaction", "query"] else "tools"
+    return "extract_wallets" if intent in ["blockchain_query"] else "tools"
 
 
 def extract_wallets(state: State) -> State:
     """Extracts wallet addresses from messages."""
     message = state["messages"][-1]
-    wallets = re.findall(ETH_REGEX, message.content)
+    if wallets := re.findall(ETH_REGEX, message.content):
+        for idx, wallet in enumerate(wallets):
+            message.content = re.sub(wallet, f"{{wallet_{idx}}}", message.content)
 
-    for idx, wallet in enumerate(wallets):
-        message.content = re.sub(wallet, f"{{wallet_{idx}}}", message.content)
-
-    wallet_dict = {f"wallet_{idx}": wallet for idx, wallet in enumerate(wallets)}
-    state["wallets"] = wallet_dict
+        wallet_dict = {f"wallet_{idx}": wallet for idx, wallet in enumerate(wallets)}
+        state["wallets"] = wallet_dict
     return state
 
 
@@ -40,6 +39,10 @@ def _inject_wallets_tool(out: AIMessage, wallets: dict):
     if tool_name == "get_erc20_tokens":
         # assumes only 1 wallet
         out.tool_calls[0]["args"]["owner_address"] = list(wallets.values())[0]
+    elif tool_name == "resolve":
+        out.tool_calls[0]["args"]["input_data"] = list(wallets.values())[0]
+    elif tool_name == "get_token_prices":
+        out.tool_calls[0]["args"]["token_addresses"] = list(wallets.values())
     return out
 
 
@@ -55,7 +58,7 @@ def agent(state: State):
 
     out = react_llm.invoke(messages)
 
-    if out.tool_calls:
+    if out.tool_calls and wallets:
         out = _inject_wallets_tool(out, wallets)
 
     return {"messages": out}
@@ -97,11 +100,14 @@ if __name__ == "__main__":
 
     inputs = {
         "messages": [
-            "How many ERC20 tokens does 0xF977814e90dA44bFA03b6295A0616a897441aceC have?"
+            # "How many ERC20 tokens does 0xF977814e90dA44bFA03b6295A0616a897441aceC have?"
+            "What is the current market cap of USDT?"
         ],
         "wallets": {},
     }
     graph = build_graph()
     graph.get_graph().draw_mermaid_png(output_file_path="diagram.png")
     out = graph.invoke(inputs, config=config)
-    out
+    for step in graph.stream(inputs, config=config, stream_mode="values"):
+        print(step)
+    print(step["messages"][-1])
