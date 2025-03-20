@@ -70,7 +70,7 @@ def main():
                     if isinstance(message, ToolMessage)
                 ]
 
-                console.print(f"\nTools used: {tools_used}", style="dim")
+                console.print(f"\nTools used: {tools_used}")
                 progress.remove_task(task)
 
             console.print(Panel.fit(message.content, border_style="magenta"))
