@@ -9,9 +9,8 @@ load_dotenv()
 
 
 class Intent(Enum):
-    query = "query"
-    transaction = "transaction"
-    general = "general"
+    blockchain_query = "blockchain_query"
+    general_query = "general_query"
 
 
 class IntentChecker(BaseModel):
@@ -24,7 +23,7 @@ llm_intent = ChatAnthropic(
 ).with_structured_output(IntentChecker)
 
 intent_template = """
-You have to determine the user's intent. The user may want to query the blockchain, submit a transaction, or have a different intent. General intents may be simply asking questions regarding the blockchain, rather than directly querying it.
+You have to determine the user's intent. The user may want to query the blockchain, or have a different intent. General queries may be simply asking questions regarding the blockchain, rather than directly querying it.
 
 Message: {message}
 """
