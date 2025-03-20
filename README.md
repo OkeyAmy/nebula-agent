@@ -39,6 +39,8 @@ cp .env.example .env
 # Edit .env with your API keys:
 # THIRDWEB_SECRET_KEY=your_thirdweb_key
 # ANTHROPIC_API_KEY=your_anthropic_key
+# EXA_API_KEY=your_exa_api_key
+# OPENAI_API_KEY=your_openai_api_key # not required for insight_chat.py
 ```
 
 ## Usage
@@ -49,9 +51,14 @@ python insight_chat.py
 ```
 
 Example queries:
-- "Show me details for wallet 0x123..."
-- "What's the balance of this NFT contract: 0x456..."
-- "Explain this transaction: 0x789..."
+
+Note that the model supports memory:
+
+* How many different ERC20 tokens does 0xF977814e90dA44bFA03b6295A0616a897441aceC own?
+* What's the value of the first token?
+
+* How much USDT does 0xC22166664e820cdA6bf4cedBdbb4fa1E6A84C440 own?
+* What is the ENS name of 0xEb0effdFB4dC5b3d5d3aC6ce29F3ED213E95d675?
 
 ## Configuration
 
