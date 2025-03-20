@@ -34,10 +34,9 @@ def extract_wallets(state: State) -> State:
 
 
 def _inject_wallets_tool(out: AIMessage, wallets: dict):
+    # for now just assume a single wallet
     tool_name = out.tool_calls[0]["name"]
-
     if tool_name == "get_erc20_tokens":
-        # assumes only 1 wallet
         out.tool_calls[0]["args"]["owner_address"] = list(wallets.values())[0]
     elif tool_name == "resolve":
         out.tool_calls[0]["args"]["input_data"] = list(wallets.values())[0]
@@ -48,12 +47,11 @@ def _inject_wallets_tool(out: AIMessage, wallets: dict):
 
 def agent(state: State):
     """Agent function to process messages using LLM."""
-    # inject prompt before final message
-    messages = (
-        state["messages"][:-1]
-        + [SystemMessage(content=react_template)]
-        + [state["messages"][-1]]
-    )
+    # # inject prompt before first message
+    if len(state["messages"]) == 1:
+        messages = [SystemMessage(content=react_template)] + state["messages"]
+    else:
+        messages = state["messages"]
     wallets = state["wallets"]
 
     out = react_llm.invoke(messages)
@@ -61,7 +59,8 @@ def agent(state: State):
     if out.tool_calls and wallets:
         out = _inject_wallets_tool(out, wallets)
 
-    return {"messages": out}
+    state["messages"] = out
+    return state
 
 
 def should_continue(state: State) -> Literal["tools", "inject_params"]:
@@ -107,7 +106,6 @@ if __name__ == "__main__":
     }
     graph = build_graph()
     graph.get_graph().draw_mermaid_png(output_file_path="diagram.png")
-    out = graph.invoke(inputs, config=config)
     for step in graph.stream(inputs, config=config, stream_mode="values"):
         print(step)
     print(step["messages"][-1])
