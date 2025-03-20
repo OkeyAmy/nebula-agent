@@ -1,6 +1,6 @@
 # Insight Chat - Blockchain AI Assistant
 
-Insight Chat is an AI-powered assistant for interacting with blockchain data using natural language. Built with LangChain and Claude 3 Haiku, it provides real-time blockchain insights through an interactive chat interface.
+Insight Chat is an AI-powered assistant for interacting with blockchain data using natural language. Built with `thirdweb-ai`, LangChain and Claude, it provides real-time blockchain insights through an interactive chat interface.
 
 ## Features
 
