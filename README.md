@@ -24,8 +24,8 @@ Insight Chat is an AI-powered assistant for interacting with blockchain data usi
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/insight-chat.git
-cd insight-chat
+git clone https://github.com/cjber/thirdweb-ai-langgraph.git
+cd thirdweb-ai-langgraph
 ```
 
 2. Install dependencies using uv:
@@ -69,22 +69,3 @@ Environment Variables:
 - **Tools Integration**: `src/tools.py`
 - **Intent Detection**: `src/chains/intent_chain.py`
 - **Reasoning Chain**: `src/chains/react_chain.py`
-
-### Testing
-
-Run the test suite:
-```bash
-pytest tests/
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
-
-Please follow the existing code style and include tests for new features.
-
-## License
-
-MIT License - See LICENSE file for details
