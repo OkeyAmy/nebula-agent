@@ -16,7 +16,16 @@ insight_tools = get_langchain_tools(insight.get_tools())
 def extract_json_value(json_data, key_path):
     """
     Extracts a value from a JSON object based on a key path.
-    Example: For key_path 'data.0.balance', it extracts the balance value from the first item in the "data" list.
+
+    Supports accessing both dictionary keys and list indexes.
+
+    Example:
+    json_data = {"data": [{"balance": 100}, {"balance": 200}]}
+    extract_json_value(json_data, "data.0.balance")  # Returns 100
+
+    :param json_data: Dictionary representing JSON data.
+    :param key_path: String representing the nested key path (e.g., "data.0.balance").
+    :return: Extracted value or None if the path is invalid.
     """
     try:
         keys = key_path.split(".")
@@ -35,23 +44,31 @@ def extract_json_value(json_data, key_path):
 def count_json_list(json_data, key_path):
     """
     Counts the number of items in a list at a given key path in a JSON object.
-    Example: For key_path 'data', it counts how many items are in the "data" list.
+
+    Example:
+    json_data = {"data": [{"id": 1}, {"id": 2}]}
+    count_json_list(json_data, "data")  # Returns 2
+
+    :param json_data: Dictionary representing JSON data.
+    :param key_path: String representing the nested key path (e.g., "data.items").
+    :return: Integer count of list items or None if the path is invalid.
     """
     try:
+        # Split key path into list of keys
         keys = key_path.split(".")
         value = json_data
-        for key in keys:
-            value = value.get(key)
-            if value is None:
-                raise KeyError(f"Key '{key}' not found in JSON structure.")
 
-        if isinstance(value, list):
-            return len(value)
-        else:
-            logging.warning(f"Value at key_path '{key_path}' is not a list.")
-            return None
-    except Exception as e:
-        logging.error(f"Error counting JSON list: {e}")
+        # Traverse the JSON using the keys
+        for key in keys:
+            if isinstance(value, dict) and key in value:
+                value = value[key]
+            else:
+                return None  # Return None if the key path doesn't exist or is invalid
+
+        # Check if the final value is a list and return the count
+        return len(value) if isinstance(value, list) else None
+    except Exception:
+        # In case of any error (though it should be rare), return None
         return None
 
 
