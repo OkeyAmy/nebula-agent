@@ -25,8 +25,9 @@ def extract_wallets(state: State) -> State:
     """Extracts wallet addresses from messages."""
     message = state["messages"][-1]
     if wallets := re.findall(ETH_REGEX, message.content):
-        for idx, wallet in enumerate(wallets):
-            message.content = re.sub(wallet, f"{{wallet_{idx}}}", message.content)
+        # for now skip this as it confuses the LLM
+        # for idx, wallet in enumerate(wallets):
+        #     message.content = re.sub(wallet, f"{{wallet_{idx}}}", message.content)
 
         wallet_dict = {f"wallet_{idx}": wallet for idx, wallet in enumerate(wallets)}
         state["wallets"] = wallet_dict
@@ -58,7 +59,6 @@ def agent(state: State):
 
     if out.tool_calls and wallets:
         out = _inject_wallets_tool(out, wallets)
-
     state["messages"] = out
     return state
 
@@ -99,8 +99,7 @@ if __name__ == "__main__":
 
     inputs = {
         "messages": [
-            # "How many ERC20 tokens does 0xF977814e90dA44bFA03b6295A0616a897441aceC have?"
-            "What is the current market cap of USDT?"
+            "How much USDT does 0xC22166664e820cdA6bf4cedBdbb4fa1E6A84C440 own?"
         ],
         "wallets": {},
     }
