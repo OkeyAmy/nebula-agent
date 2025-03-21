@@ -1,6 +1,6 @@
 # Insight Chat - Blockchain AI Assistant
 
-Insight Chat is an AI-powered assistant for interacting with blockchain data using natural language. Built with `thirdweb-ai`, LangChain and Claude, it provides real-time blockchain insights through an interactive chat interface.
+Insight Chat is an AI-powered assistant for interacting with blockchain data using natural language. Built with `thirdweb-ai` using [thirdweb Insight](https://thirdweb.com/insight), LangChain and Claude, it provides real-time blockchain insights through an interactive chat interface.
 
 ## Features
 
@@ -19,6 +19,7 @@ Insight Chat is an AI-powered assistant for interacting with blockchain data usi
 - Python 3.12 or higher
 - Thirdweb API key
 - Anthropic API key (for Claude 3)
+- Exa API key (for web search)
 
 ### Setup
 
@@ -54,11 +55,12 @@ Example queries:
 
 Note that the model supports memory:
 
-* How many different ERC20 tokens does 0xF977814e90dA44bFA03b6295A0616a897441aceC own?
-* What's the value of the first token?
-
 * How much USDT does 0xC22166664e820cdA6bf4cedBdbb4fa1E6A84C440 own?
+* How many different ERC20 tokens does this address own?
+
 * What is the ENS name of 0xEb0effdFB4dC5b3d5d3aC6ce29F3ED213E95d675?
+* How many different ERC20 tokens does this wallet own?
+* How many ERC721 NFTs does this address own?
 
 ## Configuration
 
