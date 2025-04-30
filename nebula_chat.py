@@ -2,7 +2,7 @@ import argparse
 import os
 
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
@@ -14,7 +14,7 @@ from rich.text import Text
 from thirdweb_ai import Insight, Nebula
 from thirdweb_ai.adapters.langchain import get_langchain_tools
 
-from tools import count_json_list, extract_json_value
+from src.tools import count_json_list, extract_json_value
 
 load_dotenv()
 console = Console()
@@ -48,7 +48,7 @@ def define_args():
         default=1,
         help="Blockchain chain ID for Insight model",
     )
-    parser.add_argument("--provider", type=str, default="anthropic")
+    parser.add_argument("--provider", type=str, default="google")
     return parser.parse_args()
 
 
@@ -77,14 +77,12 @@ def build_graph(args):
 
     tools = get_langchain_tools(model.get_tools())
     tools += [extract_json_value, count_json_list]
-    if args.provider == "anthropic":
-        llm = ChatAnthropic(
-            model="claude-3-haiku-20240307", temperature=args.temperature
-        )
+    if args.provider == "google":
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", temperature=args.temperature)
     elif args.provider == "openai":
         llm = ChatOpenAI(model="gpt-4o-mini", temperature=args.temperature)
     else:
-        raise ValueError("Invalid provider")
+        raise ValueError("Invalid provider. Use 'google' or 'openai'")
 
     return create_react_agent(
         llm, tools=tools, checkpointer=MemorySaver(), prompt=prompt

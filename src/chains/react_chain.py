@@ -1,20 +1,30 @@
 from dotenv import load_dotenv
+from langchain_core.prompts import PromptTemplate
+from langchain_core.tools import tool
 
-from src.llm import LLM
+from src.llm import LLM, FALLBACK_LLM
 from src.tools import (
+    call_nebula_api,
     count_json_list,
     extract_json_value,
     insight_tools,
     retrieve_web_content,
+    get_financial_data,
+    analyze_expenses,
+    get_customer_insights
 )
 
 load_dotenv()
 
 json_tools = [extract_json_value, count_json_list]
 web_tools = [retrieve_web_content]
+nebula_tools = [call_nebula_api]
 
-react_tools = insight_tools + json_tools + web_tools
-react_llm = LLM.bind_tools(react_tools)
+react_tools = insight_tools + json_tools + web_tools + nebula_tools + [
+    get_financial_data,
+    analyze_expenses,
+    get_customer_insights
+]
 
 react_template = """
 You have access to a selection of tools, which allow you to retrieve real-time Blockchain data. **Never attempt to guess Blockchain-related information—always use the available tools.**
@@ -36,6 +46,11 @@ You have access to a selection of tools, which allow you to retrieve real-time B
   - Query an address's transactions → Look up contract documentation for additional details.  
   - Retrieve ERC20 holdings → Use the JSON parser tool to extract details from the data
 
+- **Nebula API:** 
+  - For especially complex blockchain queries, you can directly use the Nebula API tool.
+  - The Nebula tool can provide comprehensive blockchain insights and execute transactions if needed.
+  - When conventional tools are insufficient, consider using the Nebula API for advanced blockchain interactions.
+
 ### When to Use Web Search:
 - **Before** using other tools if a **token address** is not provided.  
 - **Always** use the web search tool if you are not directly provided with a **token address** before proceeding with any action. This ensures that you definitely retrieve the correct information.
@@ -44,3 +59,10 @@ You have access to a selection of tools, which allow you to retrieve real-time B
 
 Your goal is **accuracy and completeness.** Always combine Blockchain data with external sources when necessary, and **never skip using the web search tool** to get the correct token address. **Never proceed without first obtaining the correct token address.** Always use **JSON parsing tools** to ensure correct and reliable data extraction.
 """
+
+react_prompt = PromptTemplate.from_template(react_template)
+
+if FALLBACK_LLM:
+    react_llm = LLM.bind_tools(react_tools) or FALLBACK_LLM.bind_tools(react_tools)
+else:
+    react_llm = LLM.bind_tools(react_tools)

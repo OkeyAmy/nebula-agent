@@ -1,6 +1,6 @@
 # Insight Chat - Blockchain AI Assistant
 
-Insight Chat is an AI-powered assistant for interacting with blockchain data using natural language. Built with `thirdweb-ai` using [thirdweb Insight](https://thirdweb.com/insight), LangChain and Claude, it provides real-time blockchain insights through an interactive chat interface.
+Insight Chat is an AI-powered assistant for interacting with blockchain data using natural language. Built with `thirdweb-ai` using [thirdweb Insight](https://thirdweb.com/insight), LangChain and Google's Gemini, it provides real-time blockchain insights through an interactive chat interface.
 
 ## Features
 
@@ -12,13 +12,15 @@ Insight Chat is an AI-powered assistant for interacting with blockchain data usi
   - Web content retrieval
 - **Rich Interface**: Beautiful terminal interface with progress tracking
 - **Caching**: In-memory caching for faster responses
+- **RESTful API**: FastAPI-based API for integrating with web applications
 
 ## Installation
 
 ### Prerequisites
 - Python 3.12 or higher
 - Thirdweb API key
-- Anthropic API key (for Claude 3)
+- Google API key (for Gemini)
+- OpenAI API key (for fallback)
 - Exa API key (for web search)
 
 ### Setup
@@ -39,12 +41,14 @@ uv sync
 cp .env.example .env
 # Edit .env with your API keys:
 # THIRDWEB_SECRET_KEY=your_thirdweb_key
-# ANTHROPIC_API_KEY=your_anthropic_key
+# GOOGLE_API_KEY=your_google_key
 # EXA_API_KEY=your_exa_api_key
-# OPENAI_API_KEY=your_openai_api_key # not required for insight_chat.py
+# OPENAI_API_KEY=your_openai_api_key # used as fallback
 ```
 
 ## Usage
+
+### Terminal Chat Interface
 
 Run the chat interface:
 ```bash
@@ -62,11 +66,34 @@ Note that the model supports memory:
 * How many different ERC20 tokens does this wallet own?
 * How many ERC721 NFTs does this address own?
 
+### RESTful API
+
+Run the API server:
+```bash
+python run_api.py
+```
+
+For development with auto-reload:
+```bash
+python run_api.py --reload
+```
+
+API documentation is available at:
+- Swagger UI: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
+
+#### Example API Endpoints
+
+- POST `/api/conversation/{user_id}` - Process a conversation with the AI assistant
+- GET `/api/conversation/{user_id}/history` - Get conversation history
+- GET `/api/health` - Health check endpoint
+
 ## Configuration
 
 Environment Variables:
 - `THIRDWEB_SECRET_KEY`: Your Thirdweb API secret key
-- `ANTHROPIC_API_KEY`: Anthropic API key (for Claude 3)
+- `GOOGLE_API_KEY`: Google API key (for Gemini)
+- `OPENAI_API_KEY`: OpenAI API key (for fallback)
 - `EXA_API_KEY`: Exa API key for web search
 
 ## Development
@@ -78,3 +105,4 @@ Environment Variables:
 - **Tools Integration**: `src/tools.py`
 - **Intent Detection**: `src/chains/intent_chain.py`
 - **Reasoning Chain**: `src/chains/react_chain.py`
+- **API Layer**: `api/` directory
